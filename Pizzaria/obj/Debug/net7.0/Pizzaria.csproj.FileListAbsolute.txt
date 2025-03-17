@@ -1,0 +1,15 @@
+D:\repos\UNI\OOP\Pizzaria\bin\Debug\net7.0\Pizzaria.exe
+D:\repos\UNI\OOP\Pizzaria\bin\Debug\net7.0\Pizzaria.deps.json
+D:\repos\UNI\OOP\Pizzaria\bin\Debug\net7.0\Pizzaria.runtimeconfig.json
+D:\repos\UNI\OOP\Pizzaria\bin\Debug\net7.0\Pizzaria.dll
+D:\repos\UNI\OOP\Pizzaria\bin\Debug\net7.0\Pizzaria.pdb
+D:\repos\UNI\OOP\Pizzaria\obj\Debug\net7.0\Pizzaria.csproj.AssemblyReference.cache
+D:\repos\UNI\OOP\Pizzaria\obj\Debug\net7.0\Pizzaria.GeneratedMSBuildEditorConfig.editorconfig
+D:\repos\UNI\OOP\Pizzaria\obj\Debug\net7.0\Pizzaria.AssemblyInfoInputs.cache
+D:\repos\UNI\OOP\Pizzaria\obj\Debug\net7.0\Pizzaria.AssemblyInfo.cs
+D:\repos\UNI\OOP\Pizzaria\obj\Debug\net7.0\Pizzaria.csproj.CoreCompileInputs.cache
+D:\repos\UNI\OOP\Pizzaria\obj\Debug\net7.0\Pizzaria.dll
+D:\repos\UNI\OOP\Pizzaria\obj\Debug\net7.0\refint\Pizzaria.dll
+D:\repos\UNI\OOP\Pizzaria\obj\Debug\net7.0\Pizzaria.pdb
+D:\repos\UNI\OOP\Pizzaria\obj\Debug\net7.0\Pizzaria.genruntimeconfig.cache
+D:\repos\UNI\OOP\Pizzaria\obj\Debug\net7.0\ref\Pizzaria.dll
