@@ -3,49 +3,39 @@ using System.Collections.Generic;
 
 namespace Pizzaria
 {
-    class Pizza
+    interface IPizza
     {
-        public string Type { get; set; }
-        public string Size { get; set; }
-        public int Quantity { get; set; }
-        public int DoughWeight { get; set; }
-        public int IngredientWeight { get; set; }
-        public string IngredientName { get; set; }
-        public int PricePerPizza { get; set; }
+        string Type { get; }
+        string Size { get; }
+        int Quantity { get; }
+        int DoughWeight { get; }
+        int IngredientWeight { get; }
+        string IngredientName { get; }
+        int PricePerPizza { get; }
+        void PrintPreparation();
+    }
 
-        public Pizza(string type, string size, int quantity)
+    abstract class Pizza : IPizza
+    {
+        public abstract string Type { get; }
+        public string Size { get; }
+        public int Quantity { get; }
+        public int DoughWeight { get; }
+        public int IngredientWeight { get; protected set; }
+        public string IngredientName { get; protected set; }
+        public int PricePerPizza { get; protected set; }
+
+        public Pizza(string size, int quantity)
         {
-            Type = type;
             Size = size;
             Quantity = quantity;
 
-            if (type == "Margarita")
+            switch (size.ToLower())
             {
-                IngredientName = "Tomatoes";
-                switch (size)
-                {
-                    case "small": DoughWeight = 300; PricePerPizza = 5; break;
-                    case "medium": DoughWeight = 500; PricePerPizza = 10; break;
-                    case "large": DoughWeight = 800; PricePerPizza = 15; break;
-                    default: throw new ArgumentException("Invalid size");
-                }
-                IngredientWeight = 1; // One tomato per pizza
-            }
-            else if (type == "Boss` Pizza")
-            {
-                IngredientName = "Ham";
-                switch (size)
-                {
-                    case "small": DoughWeight = 300; PricePerPizza = 20; break;
-                    case "medium": DoughWeight = 500; PricePerPizza = 25; break;
-                    case "large": DoughWeight = 800; PricePerPizza = 30; break;
-                    default: throw new ArgumentException("Invalid size");
-                }
-                IngredientWeight = 100; // 100g of ham per pizza
-            }
-            else
-            {
-                throw new ArgumentException("Invalid pizza type");
+                case "small": DoughWeight = 300; break;
+                case "medium": DoughWeight = 500; break;
+                case "large": DoughWeight = 800; break;
+                default: throw new ArgumentException("Invalid size");
             }
         }
 
@@ -57,16 +47,53 @@ namespace Pizzaria
             Console.WriteLine($"Total: ${Quantity * PricePerPizza}\n");
         }
     }
+    class Margarita : Pizza
+    {
+        public override string Type { get; } = "Margarita";
+
+
+        public Margarita(string size, int quantity) : base(size, quantity)
+        {
+            IngredientName = "Tomatoes";
+            IngredientWeight = 1;
+
+            PricePerPizza = size.ToLower() switch
+            {
+                "small" => 5,
+                "medium" => 10,
+                "large" => 15,
+                _ => throw new ArgumentException("Invalid size")
+            };
+        }
+    }
+    class BossPizza : Pizza
+    {
+        public override string Type { get; } = "Boss' Pizza";
+
+        public BossPizza(string size, int quantity) : base(size, quantity)
+        {
+            IngredientName = "Ham";
+            IngredientWeight = 100;
+
+            PricePerPizza = size.ToLower() switch
+            {
+                "small" => 20,
+                "medium" => 25,
+                "large" => 30,
+                _ => throw new ArgumentException("Invalid size")
+            };
+        }
+    }
 
     class Order
     {
         public string Date { get; set; }
-        public List<Pizza> Pizzas { get; set; }
+        public List<IPizza> Pizzas { get; set; }
 
         public Order(string date)
         {
             Date = date;
-            Pizzas = new List<Pizza>();
+            Pizzas = new List<IPizza>();
         }
 
         public void AddPizza(Pizza pizza)
@@ -97,11 +124,16 @@ namespace Pizzaria
 
         public void PrintSummary()
         {
-            Console.WriteLine($"{Date}");
-            Console.WriteLine($"Total pizzas {Pizzas.Count}");
-            Console.WriteLine($"Margarita {CountPizzaType("Margarita")}");
-            Console.WriteLine($"Boss` Pizza {CountPizzaType("Boss` Pizza")}");
-            Console.WriteLine($"Total Income = {TotalIncome()}\n");
+            Console.WriteLine($"Order Date: {Date}");
+            Console.WriteLine($"Total Pizzas Ordered: {Pizzas.Sum(pizza => pizza.Quantity)}");
+
+            var pizzaTypes = Pizzas.Select(p => p.Type).Distinct();
+            foreach (var type in pizzaTypes)
+            {
+                Console.WriteLine($"{type}: {CountPizzaType(type)}");
+            }
+
+            Console.WriteLine($"Total Income: ${TotalIncome()}\n");
         }
     }
 
@@ -123,7 +155,7 @@ namespace Pizzaria
 
                 if (parts.Length == 5)
                 {
-                    pizzaType = parts[1]; // Handle spaces in pizza names
+                    pizzaType = parts[1];
                     if (!int.TryParse(parts[2], out quantity) || quantity <= 0)
                     {
                         Console.WriteLine("Invalid quantity!");
@@ -133,9 +165,9 @@ namespace Pizzaria
                     size = parts[3];
                     date = parts[4];
                 }
-                else if(parts.Length == 6)
+                else if (parts.Length == 6)
                 {
-                    pizzaType = parts[1] + " " + parts[2]; // Handle spaces in pizza names
+                    pizzaType = parts[1] + " " + parts[2];
                     if (!int.TryParse(parts[3], out quantity) || quantity <= 0)
                     {
                         Console.WriteLine("Invalid quantity!");
@@ -148,15 +180,26 @@ namespace Pizzaria
                 else
                 {
                     continue;
-
                 }
 
                 try
                 {
-                    Pizza pizza = new Pizza(pizzaType, size, quantity);
+                    Pizza pizza;
+                    switch (pizzaType.ToLower())
+                    {
+                        case "margarita":
+                            pizza = new Margarita(size, quantity);
+                            break;
+                        case "boss` pizza":
+                            pizza = new BossPizza(size, quantity);
+                            break;
+                        default:
+                            Console.WriteLine("Invalid pizza type!");
+                            continue;
+                    }
+
                     pizza.PrintPreparation();
 
-                    // Find or create order for the specific date
                     Order order = orders.Find(o => o.Date == date);
                     if (order == null)
                     {
@@ -171,7 +214,6 @@ namespace Pizzaria
                 }
             }
 
-            // Print summary
             Console.WriteLine("\nCash register reset:");
             foreach (var order in orders)
             {
